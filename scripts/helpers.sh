@@ -74,7 +74,15 @@ send_notification() {
 		linux* | *bsd*)
 			notify-send -t 8000 "$title" "$message"
 			if [[ "$sound" == "on" ]]; then
-				paplay "$(find /usr/share/sounds -iname 'complete.oga')"
+				local -r sound_file="$(find /usr/share/sounds -iname 'complete.oga')";
+
+				if command -v pw-play &>/dev/null; then
+					pw-play "$sound_file";
+				elif command -v paplay &> /dev/null; then
+					paplay "$sound_file";
+				elif command -v aplay &> /dev/null; then
+					aplay "$sound_file";
+				fi
 			fi
 			;;
 		darwin*)
